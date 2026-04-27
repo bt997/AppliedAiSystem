@@ -31,8 +31,6 @@ Prompts:
 - How does the model turn those into a score  
 - What changes did you make from the starter logic  
 
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
-
 Genre, mood and artist are used in the scoring of songs. I avoided the use of energy, tempo_bpm, valence and acousticness. Danceability is only used as a tiebreaker.
 
 The model compares user preference to each song attribute one at a time. Matching genres will add 2 points, matching moods will add 3 points and matching artists will add 5. If songs end up with the same score, the higher dancability song will be ranked higher.

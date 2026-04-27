@@ -2,25 +2,15 @@
 
 ## Project Summary
 
-In this project you will build and explain a small music recommender system.
+The project I chose to expand on was the music recommender system.
 
-This project simulates a music recommender system using a catalog of 18 songs. Given a user's preferred genre, mood, and/or artist, the system scores every song and returns the top matches. Genre matches add 2 points, mood matches add 3, and artist matches add 5. Songs with equal scores are ranked by danceability as a tiebreaker. The goal is to explore how simple scoring rules can drive recommendations and where they fall short.
+Previously, this project simulated a music recommender system using a catalog of 18 songs. Given a user's preferred genre, mood, and/or artist, the system scores every song and returns the top matches. Genre matches add 2 points, mood matches add 3, and artist matches add 5. Songs with equal scores are ranked by danceability as a tiebreaker. The goal is to explore how simple scoring rules can drive recommendations and where they fall short.
+
+The goal of the expansion was to integrate Retrieval-Augmented-Generation(RAG) into the song fetching process.
 
 ---
 
 ## How The System Works
-
-Explain your design in plain language.
-
-Some prompts to answer:
-
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
-
-You can include a simple diagram or bullet list if helpful.
 
 Looking at all the attributes in songs.csv, I want my recommender to prioritize mood and genre if the user isn't looking for a specific title or artist. I wouldn't worry too much about having the user input energy, tempo_bpm, valence, danceability or acousticness because those look like arbitrary numbers that I wouldn't be able to answer if someone asked me what song I was looking for.
 
@@ -61,16 +51,27 @@ The biases to be expected are exact string matching and having a small catalog, 
    source .venv/bin/activate      # Mac or Linux
    .venv\Scripts\activate         # Windows
 
-2. Install dependencies
+2. Install dependencies and Google API Key
+
+Go to Google AI Studio and create a new project and key.
+
+For Mac:
+```bash
+echo 'export GEMINI_API_KEY=your-key-here' >> ~/.zshrc
+```
 
 ```bash
-pip install -r requirements.txt
+source ~/.zshrc
+```
+
+```bash
+python -m pip install -r requirements.txt
 ```
 
 3. Run the app:
 
 ```bash
-python -m src.main
+python src/main.py
 ```
 
 ### Running Tests
@@ -78,10 +79,8 @@ python -m src.main
 Run the starter tests with:
 
 ```bash
-pytest
+pytest tests/ -v
 ```
-
-You can add more tests in `tests/test_recommender.py`.
 
 ---
 
