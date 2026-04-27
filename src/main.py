@@ -37,13 +37,11 @@ def main() -> None:
     print("=" * 50)
 
     s = recommender.last_stats
-    gen_status = "active" if s["generation_ok"] else "unavailable (API key issue)"
     print(
         f"\nRAG pipeline status: retrieval working — "
         f"{s['n_retrieved']} songs retrieved, "
         f"avg confidence {s['avg_confidence']}, "
-        f"top match confidence {s['top_confidence']}, "
-        f"generation {gen_status}."
+        f"top match confidence {s['top_confidence']}."
     )
 
 

@@ -14,25 +14,25 @@ The goal of the expansion was to integrate Retrieval-Augmented-Generation(RAG) i
 
 Looking at all the attributes in songs.csv, I want my recommender to prioritize mood and genre if the user isn't looking for a specific title or artist. I wouldn't worry too much about having the user input energy, tempo_bpm, valence, danceability or acousticness because those look like arbitrary numbers that I wouldn't be able to answer if someone asked me what song I was looking for.
 
+To achieve my goal of integrating RAG, I used ChromaDB to store the data and a Google Gemini API Key to generate recommendations from the retrieved results.
+
 ```mermaid
 flowchart TD
-    A([User Input]) --> B{search_title\nprovided?}
+    subgraph Startup [Startup: Index Songs]
+        J[Load songs.csv] --> K[Convert each song\nto text description]
+        K --> L[Embed with\nall-MiniLM-L6-v2]
+        L --> C[(ChromaDB\nVector Store)]
+    end
 
-    B -- Yes --> C{Any song title\ncontains it?}
-    C -- No --> D([Return: Song not found])
-    C -- Yes --> E([Return top match only])
-
-    B -- No --> F[Score every song]
-    F --> G[genre contains match? +2]
-    G --> H[mood match? +3]
-    H --> I[artist match? +5]
-    I --> J[Sort by score descending]
-    J --> K{Top score == 0?}
-    K -- Yes --> N([Warn: No good match found])
-    K -- No --> L{Tie in score?}
-    L -- Yes --> O[Break tie by danceability\nnotify user]
-    L -- No --> M([Return top k songs])
-    O --> M
+    A([User natural-language query]) --> B[Embed query\nall-MiniLM-L6-v2]
+    B --> C
+    C --> D[Retrieve top-k songs\nby cosine similarity]
+    D --> E[Build prompt with\nretrieved songs as context]
+    E --> F{Gemini API\navailable?}
+    F -- Yes --> G[Generate natural-language\nrecommendation]
+    F -- No --> H[Return retrieval\nresults only]
+    G --> I([Return recommendation\n+ RAG pipeline status])
+    H --> I
 ```
 
 The biases to be expected are exact string matching and having a small catalog, which can be fixed if more songs are added to it.
@@ -84,28 +84,9 @@ pytest tests/ -v
 
 ---
 
-## Experiments You Tried
-
-Use this section to document the experiments you ran. For example:
-
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
-
----
-
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
-
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
-
+## Edge cases
 ![Edge case profiles](edgecase.png)
 ![Edge case results](edgecases.png)
 
@@ -113,134 +94,13 @@ You will go deeper on this in your model card.
 
 ## Reflection
 
-Read and complete `model_card.md`:
+The most glaring limitation in my system is the amount of times it can run due to the quota that the free tier of Google Gemini API key has. The song database is also still pretty small because it doesn't scrape from the internet or anything it just uses the songs.csv file. I tried to prevent AI misuse by setting up the API key in the environment instead of hardcoding it into any of the files that would be public on GitHub. The AI suggestion of using ChromaDB was very helpful because it actually worked but the AI suggestion to use the Anthropic API key went off the assumption that I had the money to pay to use that service. I had to prompt again for a free version.
 
-[**Model Card**](model_card.md)
+## Portfolio artifact
+This project is a good starting point on my journey as an AI engineer. It gave me a chance to add RAG into a system that previously used exact string matching and returned a song list. Instead, the functionality evolved into semantic string recognition and passing the retrieved songs to Google Gemini as context instead of directly returning the song list.
 
-Write 1 to 2 paragraphs here about what you learned:
+## Github link
+https://github.com/bt997/AppliedAiSystem
 
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
-
-
----
-
-## 7. `model_card_template.md`
-
-Combines reflection and model card framing from the Module 3 guidance. :contentReference[oaicite:2]{index=2}  
-
-```markdown
-# 🎧 Model Card - Music Recommender Simulation
-
-## 1. Model Name
-
-Give your recommender a name, for example:
-
-> VibeFinder 1.0
-
----
-
-## 2. Intended Use
-
-- What is this system trying to do
-- Who is it for
-
-Example:
-
-> This model suggests 3 to 5 songs from a small catalog based on a user's preferred genre, mood, and energy level. It is for classroom exploration only, not for real users.
-
----
-
-## 3. How It Works (Short Explanation)
-
-Describe your scoring logic in plain language.
-
-- What features of each song does it consider
-- What information about the user does it use
-- How does it turn those into a number
-
-Try to avoid code in this section, treat it like an explanation to a non programmer.
-
-Refer to model_card.md
-
----
-
-## 4. Data
-
-Describe your dataset.
-
-- How many songs are in `data/songs.csv`
-- Did you add or remove any songs
-- What kinds of genres or moods are represented
-- Whose taste does this data mostly reflect
-
-Refer to model_card.md
-
----
-
-## 5. Strengths
-
-Where does your recommender work well
-
-You can think about:
-- Situations where the top results "felt right"
-- Particular user profiles it served well
-- Simplicity or transparency benefits
-
-Refer to model_card.md
-
----
-
-## 6. Limitations and Bias
-
-Where does your recommender struggle
-
-Some prompts:
-- Does it ignore some genres or moods
-- Does it treat all users as if they have the same taste shape
-- Is it biased toward high energy or one genre by default
-- How could this be unfair if used in a real product
-
-Refer to model_card.md
-
----
-
-## 7. Evaluation
-
-How did you check your system
-
-Examples:
-- You tried multiple user profiles and wrote down whether the results matched your expectations
-- You compared your simulation to what a real app like Spotify or YouTube tends to recommend
-- You wrote tests for your scoring logic
-
-You do not need a numeric metric, but if you used one, explain what it measures.
-
-Refer to model_card.md
-
----
-
-## 8. Future Work
-
-If you had more time, how would you improve this recommender
-
-Examples:
-
-- Add support for multiple users and "group vibe" recommendations
-- Balance diversity of songs instead of always picking the closest match
-- Use more features, like tempo ranges or lyric themes
-
-Refer to model_card.md
-
----
-
-## 9. Personal Reflection
-
-A few sentences about what you learned:
-
-- What surprised you about how your system behaved
-- How did building this change how you think about real music recommenders
-- Where do you think human judgment still matters, even if the model seems "smart"
-
-Refer to model_card.md
-
+## Loom video link
+https://www.loom.com/share/3e71d046978c4866932b602d37457c6a
