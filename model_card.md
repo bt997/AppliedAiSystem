@@ -3,7 +3,7 @@
 ## 1. Model Name  
 
 Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+Example: **Claude Music**  
 
 ---
 
@@ -17,6 +17,7 @@ Prompts:
 - What assumptions does it make about the user  
 - Is this for real users or classroom exploration  
 
+It generates song recommendations based on a user's preferences. It is for classroom exploration, not real users yet.
 ---
 
 ## 3. How the Model Works  
@@ -32,6 +33,9 @@ Prompts:
 
 Avoid code here. Pretend you are explaining the idea to a friend who does not program.
 
+Genre, mood and artist are used in the scoring of songs. I avoided the use of energy, tempo_bpm, valence and acousticness. Danceability is only used as a tiebreaker.
+
+The model compares user preference to each song attribute one at a time. Matching genres will add 2 points, matching moods will add 3 points and matching artists will add 5. If songs end up with the same score, the higher dancability song will be ranked higher.
 ---
 
 ## 4. Data  
@@ -45,6 +49,10 @@ Prompts:
 - Did you add or remove data  
 - Are there parts of musical taste missing in the dataset  
 
+There are 18 songs in the catalog. The genres represented are: pop, lofi, rock, ambient, jazz, synthwave, indie pop, classical, latin, r&b, metal, country, soul, hip-hop and folk. 
+The moods represented are happy, chill, intense, relaxed, moody, focused, sad, euphoric, romantic, angry, nostalgic, melancholic, energetic and calm.
+I added songs to the sample catalog.
+There are for sure a lot of musical taste missing in the dataset because there are just so many types of music out there.
 ---
 
 ## 5. Strengths  
@@ -57,6 +65,7 @@ Prompts:
 - Any patterns you think your scoring captures correctly  
 - Cases where the recommendations matched your intuition  
 
+Since lofi and chill are matching genre and moods, those recommendations come out as expected.
 ---
 
 ## 6. Limitations and Bias 
@@ -69,6 +78,8 @@ Prompts:
 - Genres or moods that are underrepresented  
 - Cases where the system overfits to one preference  
 - Ways the scoring might unintentionally favor some users  
+
+Edge cases are shown in the screenshots on the README.md like an empty user profile, danceability ties and partial profiles.
 
 ---
 
@@ -85,6 +96,7 @@ Prompts:
 
 No need for numeric metrics unless you created some.
 
+I was surprised by how quickly an algorithm recipe was created but how different it was from what I had in mind. I had to reprompt Claude to give it more of an idea of what I wanted.
 ---
 
 ## 8. Future Work  
@@ -98,6 +110,7 @@ Prompts:
 - Improving diversity among the top results  
 - Handling more complex user tastes  
 
+There could always be more genres of music as mentioned before since there are so many in the world.
 ---
 
 ## 9. Personal Reflection  
@@ -109,3 +122,5 @@ Prompts:
 - What you learned about recommender systems  
 - Something unexpected or interesting you discovered  
 - How this changed the way you think about music recommendation apps  
+
+To all music recommendation apps, we are just numbers or keywords. I already noticed before this project that my Spotify radio had so many songs I already listened to or very similar playlists even though I was comparing two different song radios.

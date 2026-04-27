@@ -4,14 +4,7 @@
 
 In this project you will build and explain a small music recommender system.
 
-Your goal is to:
-
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
-
-Replace this paragraph with your own summary of what your version does.
+This project simulates a music recommender system using a catalog of 18 songs. Given a user's preferred genre, mood, and/or artist, the system scores every song and returns the top matches. Genre matches add 2 points, mood matches add 3, and artist matches add 5. Songs with equal scores are ranked by danceability as a tiebreaker. The goal is to explore how simple scoring rules can drive recommendations and where they fall short.
 
 ---
 
@@ -29,6 +22,32 @@ Some prompts to answer:
 
 You can include a simple diagram or bullet list if helpful.
 
+Looking at all the attributes in songs.csv, I want my recommender to prioritize mood and genre if the user isn't looking for a specific title or artist. I wouldn't worry too much about having the user input energy, tempo_bpm, valence, danceability or acousticness because those look like arbitrary numbers that I wouldn't be able to answer if someone asked me what song I was looking for.
+
+```mermaid
+flowchart TD
+    A([User Input]) --> B{search_title\nprovided?}
+
+    B -- Yes --> C{Any song title\ncontains it?}
+    C -- No --> D([Return: Song not found])
+    C -- Yes --> E([Return top match only])
+
+    B -- No --> F[Score every song]
+    F --> G[genre contains match? +2]
+    G --> H[mood match? +3]
+    H --> I[artist match? +5]
+    I --> J[Sort by score descending]
+    J --> K{Top score == 0?}
+    K -- Yes --> N([Warn: No good match found])
+    K -- No --> L{Tie in score?}
+    L -- Yes --> O[Break tie by danceability\nnotify user]
+    L -- No --> M([Return top k songs])
+    O --> M
+```
+
+The biases to be expected are exact string matching and having a small catalog, which can be fixed if more songs are added to it.
+
+![Recommendations output](recommendations.png)
 ---
 
 ## Getting Started
@@ -88,6 +107,9 @@ Examples:
 
 You will go deeper on this in your model card.
 
+![Edge case profiles](edgecase.png)
+![Edge case results](edgecases.png)
+
 ---
 
 ## Reflection
@@ -140,6 +162,8 @@ Describe your scoring logic in plain language.
 
 Try to avoid code in this section, treat it like an explanation to a non programmer.
 
+Refer to model_card.md
+
 ---
 
 ## 4. Data
@@ -150,6 +174,8 @@ Describe your dataset.
 - Did you add or remove any songs
 - What kinds of genres or moods are represented
 - Whose taste does this data mostly reflect
+
+Refer to model_card.md
 
 ---
 
@@ -162,6 +188,8 @@ You can think about:
 - Particular user profiles it served well
 - Simplicity or transparency benefits
 
+Refer to model_card.md
+
 ---
 
 ## 6. Limitations and Bias
@@ -173,6 +201,8 @@ Some prompts:
 - Does it treat all users as if they have the same taste shape
 - Is it biased toward high energy or one genre by default
 - How could this be unfair if used in a real product
+
+Refer to model_card.md
 
 ---
 
@@ -187,6 +217,8 @@ Examples:
 
 You do not need a numeric metric, but if you used one, explain what it measures.
 
+Refer to model_card.md
+
 ---
 
 ## 8. Future Work
@@ -199,6 +231,8 @@ Examples:
 - Balance diversity of songs instead of always picking the closest match
 - Use more features, like tempo ranges or lyric themes
 
+Refer to model_card.md
+
 ---
 
 ## 9. Personal Reflection
@@ -208,4 +242,6 @@ A few sentences about what you learned:
 - What surprised you about how your system behaved
 - How did building this change how you think about real music recommenders
 - Where do you think human judgment still matters, even if the model seems "smart"
+
+Refer to model_card.md
 
