@@ -2,7 +2,7 @@
 Command line runner for the RAG Music Recommender.
 
 Requires:
-  - G environment variable set
+  - GEMINI_API_KEY environment variable set
   - Dependencies installed: pip install -r requirements.txt
 """
 
@@ -10,11 +10,15 @@ import logging
 import sys
 from pathlib import Path
 
+# Ensure the project root is importable so `from src.X import Y` works when
+# this file is invoked as `python src/main.py`.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-from rag_recommender import RAGMusicRecommender
+from src.rag_recommender import RAGMusicRecommender
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "songs.csv"
 

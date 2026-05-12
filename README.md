@@ -76,10 +76,10 @@ python src/main.py
 
 ### Running Tests
 
-Run the starter tests with:
+Run the tests with:
 
 ```bash
-pytest tests/ -v
+python -m  pytest tests/ -v
 ```
 
 ---
