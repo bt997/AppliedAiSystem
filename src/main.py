@@ -18,14 +18,14 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-from src.rag_recommender import RAGMusicRecommender
+from src.rag_recommender import build_recommender  # noqa: E402
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "songs.csv"
 
 
 def main() -> None:
     print("Initializing RAG music recommender...")
-    recommender = RAGMusicRecommender(str(DATA_PATH))
+    recommender = build_recommender(str(DATA_PATH))
 
     print("\nDescribe what you want to listen to (natural language).")
     print('Example: "something chill for late-night studying"\n')
@@ -37,15 +37,14 @@ def main() -> None:
 
     print("\nGenerating recommendations...\n" + "=" * 50)
     result = recommender.recommend(query)
-    print("\n" + result)
+    print("\n" + result.text)
     print("=" * 50)
 
-    s = recommender.last_stats
     print(
         f"\nRAG pipeline status: retrieval working — "
-        f"{s['n_retrieved']} songs retrieved, "
-        f"avg confidence {s['avg_confidence']}, "
-        f"top match confidence {s['top_confidence']}."
+        f"{result.n_retrieved} songs retrieved, "
+        f"avg confidence {result.avg_confidence}, "
+        f"top match confidence {result.top_confidence}."
     )
 
 
